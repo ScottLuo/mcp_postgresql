@@ -98,20 +98,27 @@ The resulting binary is a static executable (~17 MB) with no CGO dependencies, s
 
 ## CI/CD Release Packaging
 
-The release process (push to `main` → release → Linux amd64 package) must produce a package that contains exactly:
+The release process is automated via a GitHub Actions workflow (`.github/workflows/release.yml`), triggered on every push to `main`:
 
-1. The compiled binary `bin/mcp-tool-binary` (with execute permission).
+1. **Version increment** — reads the latest `v*` Git tag; if none exists, uses `v0.1.0`; otherwise increments the patch version (e.g. `v0.1.0` → `v0.1.1`).
+2. **Build** — compiles a static `linux/amd64` binary with `CGO_ENABLED=0` and injects the version via ldflags.
+3. **Package** — creates a `tar.gz` containing the `mcp-tool` binary (executable) and `tool.yaml`.
+4. **Release** — publishes a GitHub Release with the version tag and the tar.gz artifact.
+
+The release package must contain exactly:
+
+1. The compiled binary `mcp-tool` (with execute permission).
 2. The `tool.yaml` contract file.
 
 ```bash
 # 1. Build the static binary
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/mcp-tool-binary .
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=<version>" -o mcp-tool .
 
 # 2. Ensure the binary is executable
-chmod +x bin/mcp-tool-binary
+chmod +x mcp-tool
 
 # 3. Package the release
-tar -czf mcp-postgresql-linux-amd64.tar.gz bin/mcp-tool-binary tool.yaml
+tar -czf mcp-postgresql-<version>-linux-amd64.tar.gz mcp-tool tool.yaml
 ```
 
 Requirements:

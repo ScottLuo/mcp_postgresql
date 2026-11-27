@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Determine next version
+        id: version
+        run: |
+          # Get the latest git tag matching v* pattern
+          LATEST_TAG=$(git tag --list 'v*' --sort=-v:refname | head -n 1)
+          if [ -z "$LATEST_TAG" ]; then
+            # No existing tags, start from v0.1.0
+            NEW_VERSION="v0.1.0"
+          else
+            # Strip the 'v' prefix, increment the patch component
+            CURRENT="${LATEST_TAG#v}"
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+            NEW_VERSION="v${MAJOR}.${MINOR}.$((PATCH + 1))"
+          fi
+          echo "version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Next release version: ${NEW_VERSION}"
+
+      - name: Build binary
+        run: |
+          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build \
+            -ldflags "-X main.version=${{ steps.version.outputs.version }}" \
+            -o mcp-tool .
+
+      - name: Create release package
+        run: |
+          chmod +x mcp-tool
+          tar -czf mcp-postgresql-${{ steps.version.outputs.version }}-linux-amd64.tar.gz mcp-tool tool.yaml
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          title: "Release ${{ steps.version.outputs.version }}"
+          files: mcp-postgresql-${{ steps.version.outputs.version }}-linux-amd64.tar.gz
+          draft: false
+          prerelease: false
