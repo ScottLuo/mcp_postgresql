@@ -1,0 +1,8 @@
+language: go
+kind: compiled
+entrypoint: ./bin/mcp-tool-binary
+args: []
+env:
+  LOG_LEVEL: "INFO"
+  POSTGRES_TARGETS: ""
+timeout_seconds: 30
