@@ -32,7 +32,7 @@ func main() {
 
 	// Create MCP server
 	server := mcp.NewServer(
-		&mcp.Implementation{Name: "mcp-postgresql", Version: "v1.0.0"},
+		&mcp.Implementation{Name: "mcp-postgresql", Version: version},
 		nil,
 	)
 
