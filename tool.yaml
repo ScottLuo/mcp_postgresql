@@ -1,6 +1,6 @@
 language: go
 kind: compiled
-entrypoint: ./bin/mcp-tool-binary
+entrypoint: ./mcp-postgresql
 args: []
 env:
   LOG_LEVEL: "INFO"
