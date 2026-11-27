@@ -32,7 +32,7 @@
 ```yaml
 language: go
 kind: compiled
-entrypoint: ./bin/mcp-tool-binary  # 相对路径，指向编译后的二进制文件
+entrypoint: ./mcp-<name>  # 相对路径，指向编译后的二进制文件
 # install: "" # 对于 compiled 类型通常不需要 install 脚本，但如果需要预构建可保留为空或注释
 # interpreter: none # Go 是编译型语言
 args: [] # 可选，如果有默认参数
@@ -45,7 +45,9 @@ env:
 timeout_seconds: 30
 ```
 
-*注意：`entrypoint` 指向的必须是编译好的二进制文件路径。*
+*注意：*
+- 二进制文件以 mcp-<name>, 例 mcp-bash
+- `entrypoint` 指向的必须是release package的二进制文件路径, 通常为 ./mcp-<name>
 
 ## 6. CI/CD Packaging Logic (Simulated in Code/Docs)
 虽然你主要生成代码，但请在代码或 README 中明确说明如何满足以下 CI/CD 需求（Push to main -> Release -> Linux amd64 Package）：
