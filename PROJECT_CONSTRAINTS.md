@@ -46,8 +46,8 @@ timeout_seconds: 30
 ```
 
 *注意：*
-- 二进制文件以 mcp-<name>, 例 mcp-bash
-- `entrypoint` 指向的必须是release package的二进制文件路径, 通常为 ./mcp-<name>
+- 二进制文件以 `mcp-<name>`, 例 `mcp-bash`
+- `entrypoint` 指向的必须是release package的二进制文件路径, 通常为 `./mcp-<name>`
 
 ## 6. CI/CD Packaging Logic (Simulated in Code/Docs)
 虽然你主要生成代码，但请在代码或 README 中明确说明如何满足以下 CI/CD 需求（Push to main -> Release -> Linux amd64 Package）：
