@@ -85,13 +85,13 @@ export LOG_LEVEL=INFO
 ### Local development
 
 ```bash
-go build -o bin/mcp-tool-binary .
+go build -o mcp-postgresql .
 ```
 
 ### Release (Linux amd64, Alpine 3 compatible)
 
 ```bash
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/mcp-tool-binary .
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o mcp-postgresql .
 ```
 
 The resulting binary is a static executable (~17 MB) with no CGO dependencies, so it runs inside an **Alpine Linux 3** container.
@@ -102,23 +102,23 @@ The release process is automated via a GitHub Actions workflow (`.github/workflo
 
 1. **Version increment** — reads the latest `v*` Git tag; if none exists, uses `v0.1.0`; otherwise increments the patch version (e.g. `v0.1.0` → `v0.1.1`).
 2. **Build** — compiles a static `linux/amd64` binary with `CGO_ENABLED=0` and injects the version via ldflags.
-3. **Package** — creates a `tar.gz` containing the `mcp-tool` binary (executable) and `tool.yaml`.
+3. **Package** — creates a `tar.gz` containing the `mcp-postgresql` binary (executable) and `tool.yaml`.
 4. **Release** — publishes a GitHub Release with the version tag and the tar.gz artifact.
 
 The release package must contain exactly:
 
-1. The compiled binary `mcp-tool` (with execute permission).
+1. The compiled binary `mcp-postgresql` (with execute permission).
 2. The `tool.yaml` contract file.
 
 ```bash
 # 1. Build the static binary
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=<version>" -o mcp-tool .
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=<version>" -o mcp-postgresql .
 
 # 2. Ensure the binary is executable
-chmod +x mcp-tool
+chmod +x mcp-postgresql
 
 # 3. Package the release
-tar -czf mcp-postgresql-<version>-linux-amd64.tar.gz mcp-tool tool.yaml
+tar -czf mcp-postgresql-<version>-linux-amd64.tar.gz mcp-postgresql tool.yaml
 ```
 
 Requirements:

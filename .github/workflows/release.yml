@@ -42,12 +42,12 @@ jobs:
         run: |
           GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build \
             -ldflags "-X main.version=${{ steps.version.outputs.version }}" \
-            -o mcp-tool .
+            -o mcp-postgresql .
 
       - name: Create release package
         run: |
-          chmod +x mcp-tool
-          tar -czf mcp-postgresql-${{ steps.version.outputs.version }}-linux-amd64.tar.gz mcp-tool tool.yaml
+          chmod +x mcp-postgresql
+          tar -czf mcp-postgresql-${{ steps.version.outputs.version }}-linux-amd64.tar.gz mcp-postgresql tool.yaml
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
